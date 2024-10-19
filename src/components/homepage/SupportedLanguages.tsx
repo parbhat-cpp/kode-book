@@ -39,7 +39,7 @@ const ReviewCard = ({
 
 export function SupportedLanguages() {
   return (
-    <div className="relative flex py-10  w-full flex-col items-center justify-center overflow-hidden bg-lpSecondaryBg">
+    <div className="relative flex py-10  w-full flex-col items-center justify-center overflow-hidden bg-white">
       <Marquee pauseOnHover className="[--duration:20s]">
         {firstRow.map((language) => (
           <ReviewCard key={language.name} {...language} />
@@ -50,8 +50,8 @@ export function SupportedLanguages() {
           <ReviewCard key={language.name} {...language} />
         ))}
       </Marquee>
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-lpSecondaryBg dark:from-lpSecondaryBg"></div>
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-gradient-to-l from-lpSecondaryBg dark:from-background"></div>
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-white dark:from-lpSecondaryBg"></div>
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-gradient-to-l from-white dark:from-background"></div>
     </div>
   );
 }

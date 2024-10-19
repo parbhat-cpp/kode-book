@@ -1,11 +1,14 @@
-export const routes = {
-  "about": {
+export const routes = [
+  {
+    "name": "About",
     "url": "/about",
-    "label": "About",
+    "label": "About Kode Book",
   },
-  "github": {
+  {
+    "name": "GitHub",
     "url": "https://github.com/parbhat-cpp/kode-book",
-    "label": "GitHub"
-  }
-}
+    "label": "Kode Book GitHub",
+  },
+]
 
+export const creatorPortfolio = 'https://parbhatsharma.in/';
