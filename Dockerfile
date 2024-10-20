@@ -1,4 +1,4 @@
-FROM node:latest as base
+FROM node:alpine as base
 WORKDIR /app
 COPY package*.json ./
 EXPOSE 3000
@@ -12,7 +12,7 @@ FROM base as production
 WORKDIR /app
 
 ENV NODE_ENV=production
-RUN npm ci
+RUN npm ci --only=production
 
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
@@ -25,8 +25,8 @@ COPY --from=builder /app/public ./public
 
 CMD npm start
 
-FROM base as dev
+FROM base as development
 ENV NODE_ENV=development
-RUN npm install 
+RUN npm ci 
 COPY . .
 CMD npm run dev

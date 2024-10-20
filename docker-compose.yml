@@ -3,7 +3,7 @@ services:
     image: kode-book
     build:
       context: ./
-      target: dev
+      target: development
       dockerfile: Dockerfile
     volumes:
         - .:/app
