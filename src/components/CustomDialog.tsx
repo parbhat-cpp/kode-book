@@ -23,7 +23,7 @@ const CustomDialog = (props: DialogProps) => {
       <DialogContent>
         {
           props.withHeader && <DialogHeader>
-            <DialogTitle>{props.heading}</DialogTitle>
+            <DialogTitle className='text-center'>{props.heading}</DialogTitle>
             <DialogDescription>
               {props.description}
             </DialogDescription>
