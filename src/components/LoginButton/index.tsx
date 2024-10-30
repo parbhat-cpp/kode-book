@@ -22,12 +22,18 @@ import {
 import { Input } from "../ui/input";
 import Button from "../Button";
 import { supabase } from "@/supabaseClient";
+import { useAtom } from "jotai/react";
+import { sessionAtom, userAtom } from "@/store/authStore";
+import { Session, User } from "@supabase/supabase-js";
 
 interface LoginButtonProps extends React.HTMLAttributes<HTMLDivElement> {
   btntext?: string;
 }
 
 const LoginButton = (props: LoginButtonProps) => {
+  const [, setUser] = useAtom<User | null>(userAtom);
+  const [, setSession] = useAtom<Session | null>(sessionAtom);
+
   const { className, btntext, ...filteredProps } = props;
   const [tab, setTab] = useState<"Login" | "Signup" | "Forgot Password">(
     "Login"
@@ -83,6 +89,8 @@ const LoginButton = (props: LoginButtonProps) => {
         toast.error(loginResponse.error.message);
       } else {
         toast.success("Log in successful");
+        setUser(loginResponse.data.user);
+        setSession(loginResponse.data.session);
         navigate("/dashboard");
       }
     } else {
@@ -131,6 +139,8 @@ const LoginButton = (props: LoginButtonProps) => {
         toast.error(signupResponse.error.message);
       } else {
         toast.success("Account created successfully");
+        setUser(signupResponse.data.user);
+        setSession(signupResponse.data.session);
         navigate("/dashboard");
       }
     } else {
@@ -361,7 +371,10 @@ const LoginButton = (props: LoginButtonProps) => {
                   />
                   <Button type="submit">Forgot Password</Button>
                   <div className="flex flex-col items-center">
-                    <p className="underline cursor-pointer" onClick={() => changeTab("Login")}>
+                    <p
+                      className="underline cursor-pointer"
+                      onClick={() => changeTab("Login")}
+                    >
                       Back to login
                     </p>
                   </div>
