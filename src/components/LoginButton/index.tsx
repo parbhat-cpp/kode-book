@@ -11,12 +11,17 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { useNavigate } from "react-router-dom";
 
 import CustomDialog from "../CustomDialog";
-import { loginSchema, signupSchema } from "@/schemas/authSchema";
-// import { AuthResponse } from "@/types/authTypes";
+import {
+  forgotPasswordSchema,
+  loginSchema,
+  signupSchema,
+} from "@/schemas/authSchema";
 import { Input } from "../ui/input";
 import Button from "../Button";
+import { supabase } from "@/supabaseClient";
 
 interface LoginButtonProps extends React.HTMLAttributes<HTMLDivElement> {
   btntext?: string;
@@ -24,7 +29,11 @@ interface LoginButtonProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const LoginButton = (props: LoginButtonProps) => {
   const { className, btntext, ...filteredProps } = props;
-  const [tab, setTab] = useState<"Login" | "Signup">("Login");
+  const [tab, setTab] = useState<"Login" | "Signup" | "Forgot Password">(
+    "Login"
+  );
+
+  const navigate = useNavigate();
 
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -44,12 +53,15 @@ const LoginButton = (props: LoginButtonProps) => {
     },
   });
 
-  const changeTab = () => {
-    if (tab === "Login") {
-      setTab("Signup");
-    } else {
-      setTab("Login");
-    }
+  const forgotPasswordForm = useForm<z.infer<typeof forgotPasswordSchema>>({
+    resolver: zodResolver(forgotPasswordSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
+
+  const changeTab = (tab: "Login" | "Signup" | "Forgot Password") => {
+    setTab(tab);
   };
 
   const handleLogin = async (formData: z.infer<typeof loginSchema>) => {
@@ -59,16 +71,20 @@ const LoginButton = (props: LoginButtonProps) => {
     });
 
     if (validate.success) {
-      // const email = validate.data.login_email as string;
-      // const password = validate.data.login_password as string;
+      const email = validate.data.login_email as string;
+      const password = validate.data.login_password as string;
 
-      // const loginResponse: AuthResponse = await login(email, password);
+      const loginResponse = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+      });
 
-      // if (loginResponse.type === "success") {
-      //   toast.success(loginResponse.message);
-      // } else {
-      //   toast.error(loginResponse.message);
-      // }
+      if (loginResponse.error?.message) {
+        toast.error(loginResponse.error.message);
+      } else {
+        toast.success("Log in successful");
+        navigate("/dashboard");
+      }
     } else {
       toast.error("Please enter valid data");
     }
@@ -83,29 +99,69 @@ const LoginButton = (props: LoginButtonProps) => {
     });
 
     if (signupValidate.success) {
-      // const username = signupValidate.data.username as string;
-      // const fullname = signupValidate.data.fullname as string;
-      // const email = signupValidate.data.signup_email as string;
-      // const password = signupValidate.data.signup_password as string;
+      const username = signupValidate.data.username as string;
+      const fullname = signupValidate.data.fullname as string;
+      const email = signupValidate.data.signup_email as string;
+      const password = signupValidate.data.signup_password as string;
 
-      // const usernameExists = await supabase.from("profiles").select("username").match({
-      //   username: username
-      // })
+      const usernameExists = await supabase
+        .from("profiles")
+        .select("username")
+        .match({
+          username: username,
+        });
 
-      // if (usernameExists.data?.length) {
-      //   toast.error('Username already exists');
-      //   return;
-      // }
+      if (usernameExists.data?.length) {
+        toast.error("Username already exists");
+        return;
+      }
 
-      // const signupResponse: AuthResponse = await signup(email, password, fullname, username);
+      const signupResponse = await supabase.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+          data: {
+            username: username,
+            full_name: fullname,
+          },
+        },
+      });
 
-      // if (signupResponse.type === "success") {
-      //   toast.success(signupResponse.message);
-      // } else {
-      //   toast.error(signupResponse.message);
-      // }
+      if (signupResponse.error?.message) {
+        toast.error(signupResponse.error.message);
+      } else {
+        toast.success("Account created successfully");
+        navigate("/dashboard");
+      }
     } else {
       toast.error("Please enter valid data");
+    }
+  };
+
+  const handleForgotPassword = async (
+    formData: z.infer<typeof forgotPasswordSchema>
+  ) => {
+    const forgotPasswordValidate = forgotPasswordSchema.safeParse({
+      email: formData.email,
+    });
+
+    if (forgotPasswordValidate.success) {
+      const email = forgotPasswordValidate.data.email as string;
+
+      const forgotPasswordResponse = await supabase.auth.resetPasswordForEmail(
+        email,
+        {
+          redirectTo: `${import.meta.env.VITE_BASE_URL}/update-password`,
+        }
+      );
+
+      if (forgotPasswordResponse.error?.message) {
+        toast.error(forgotPasswordResponse.error.message);
+      } else {
+        toast.success("Please check your registered email to reset password");
+      }
+    } else {
+      toast.error(forgotPasswordValidate.error.message);
     }
   };
 
@@ -113,15 +169,20 @@ const LoginButton = (props: LoginButtonProps) => {
     <>
       <CustomDialog
         trigger={
-          <div
-            className={clsx(
-              "py-2 px-7 border-2 border-white bg-lpPrimaryBg text-white rounded-3xl",
-              className
-            )}
-            {...filteredProps}
-          >
-            <p>{btntext ? btntext : "Login"}</p>
-          </div>
+          <>
+            <div
+              className={clsx(
+                "py-2 px-7 border-2 border-white bg-lpPrimaryBg text-white rounded-3xl sm:block hidden",
+                className
+              )}
+              {...filteredProps}
+            >
+              <p>{btntext ? btntext : "Login"}</p>
+            </div>
+            <div className="sm:hidden block">
+              <p>Login</p>
+            </div>
+          </>
         }
         withHeader
         heading={tab}
@@ -169,12 +230,17 @@ const LoginButton = (props: LoginButtonProps) => {
                   />
                   <Button type="submit">Login</Button>
                   <div className="flex flex-col items-center">
-                    <p className="underline cursor-pointer">Forgot password?</p>
+                    <p
+                      className="underline cursor-pointer"
+                      onClick={() => changeTab("Forgot Password")}
+                    >
+                      Forgot password?
+                    </p>
                     <span className="flex">
                       <p>No account?&nbsp;</p>
                       <p
                         className="underline cursor-pointer"
-                        onClick={changeTab}
+                        onClick={() => changeTab("Signup")}
                       >
                         Create one
                       </p>
@@ -261,11 +327,43 @@ const LoginButton = (props: LoginButtonProps) => {
                       <p>Already have an account?&nbsp;</p>
                       <p
                         className="underline cursor-pointer"
-                        onClick={changeTab}
+                        onClick={() => changeTab("Login")}
                       >
                         Login
                       </p>
                     </span>
+                  </div>
+                </form>
+              </Form>
+            </div>
+            {/* Forgot Password */}
+            <div
+              className={`${tab === "Forgot Password" ? "block" : "hidden"}`}
+            >
+              <Form {...forgotPasswordForm}>
+                <form
+                  onSubmit={forgotPasswordForm.handleSubmit(
+                    handleForgotPassword
+                  )}
+                  className="flex flex-col space-y-5"
+                >
+                  <FormField
+                    control={forgotPasswordForm.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input id="email" placeholder="Email" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button type="submit">Forgot Password</Button>
+                  <div className="flex flex-col items-center">
+                    <p className="underline cursor-pointer" onClick={() => changeTab("Login")}>
+                      Back to login
+                    </p>
                   </div>
                 </form>
               </Form>
