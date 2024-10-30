@@ -92,6 +92,10 @@
     font-size: 16px;
   }
 
+  .hero-clip {
+    clip-path: polygon(0 0, 100% 0, 94% 93%, 0% 100%);
+  }
+
   body {
     @apply bg-background text-foreground;
   }
