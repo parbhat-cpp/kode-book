@@ -114,7 +114,7 @@ const PageWrapper = (props: PageWrapperProps) => {
               />
               <h4>Kode Book</h4>
             </Link>
-            <div className="sm:flex hidden gap-5 items-center mx-5 text-lpSecondaryText">
+            <div className="sm:flex hidden gap-5 items-center mx-5 text-lpPrimaryText">
               {routes.map((link) => (
                 <NavbarLink
                   key={link.name}
