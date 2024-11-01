@@ -14,7 +14,7 @@ const Loader = () => {
         stroke-width="5"
         stroke-linecap="round"
         stroke-linejoin="round"
-        className="text-lpSecondaryText"
+        className="text-lpPrimaryText"
       ></path>
     </svg>
   );

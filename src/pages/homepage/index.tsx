@@ -43,10 +43,10 @@ const Homepage = () => {
               <h1 className="text-4xl sm:text-5xl">
                 A Social Media for Coders
               </h1>
-              <h2 className="text-lpSecondaryText text-2xl sm:text-4xl">
+              <h2 className="text-lpPrimaryText text-2xl sm:text-4xl">
                 Code with your buddies
               </h2>
-              <p className="text-lpSecondaryText">
+              <p className="text-lpPrimaryText">
                 Welcome to **Kode Book** – the social platform for programmers!
                 Connect, collaborate, and code with developers worldwide. Share
                 projects, solve challenges, and grow your skills in a community
