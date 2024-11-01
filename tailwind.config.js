@@ -55,7 +55,9 @@ export default {
 				},
 				lpPrimaryBg: 'hsl(var(--lp-primary-bg))',
 				lpSecondaryBg: 'hsl(var(--lp-secondary-bg))',
-				lpSecondaryText: 'hsl(var(--lp-secondary-text))',
+				lpPrimaryText: 'hsl(var(--lp-primary-text))',
+				separatorColor: 'hsl(var(--separator-color))',
+				btnHoverBg: 'hsl(var(--btn-hover))',
 			},
 			keyframes: {
 				marquee: {
