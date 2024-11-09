@@ -30,12 +30,16 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
-    /* App variables */
-    --lp-primary-bg: 234, 18%, 11%;
+    /* Landing page variables */
+    --lp-primary-bg: 215, 19%, 35%;
     --lp-secondary-bg: 210, 40%, 96%;
     --lp-primary-text: 215, 27%, 84%;
     --separator-color: 231, 7%, 19%;
     --btn-hover: 172, 46%, 77%;
+    /* App variables */
+    --app-primary-bg: 234, 18%, 11%;
+    --app-secondary-bg: 235, 15%, 15%;
+    --app-tertiary-bg: 0, 0%, 28%;
   }
   .dark {
     --background: 0 0% 3.9%;
@@ -96,6 +100,10 @@
 
   .hero-clip {
     clip-path: polygon(0 0, 100% 0, 94% 93%, 0% 100%);
+  }
+
+  .circle {
+    clip-path: circle(50% at 50% 50%);
   }
 
   body {

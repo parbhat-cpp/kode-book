@@ -23,8 +23,8 @@ import { Input } from "../ui/input";
 import Button from "../Button";
 import { supabase } from "@/supabaseClient";
 import { useAtom } from "jotai/react";
-import { sessionAtom, userAtom } from "@/store/authStore";
-import { Session, User } from "@supabase/supabase-js";
+import { userAtom } from "@/store/authStore";
+import { User } from "@supabase/supabase-js";
 
 interface LoginButtonProps extends React.HTMLAttributes<HTMLDivElement> {
   btntext?: string;
@@ -32,7 +32,6 @@ interface LoginButtonProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const LoginButton = (props: LoginButtonProps) => {
   const [, setUser] = useAtom<User | null>(userAtom);
-  const [, setSession] = useAtom<Session | null>(sessionAtom);
 
   const { className, btntext, ...filteredProps } = props;
   const [tab, setTab] = useState<"Login" | "Signup" | "Forgot Password">(
@@ -90,7 +89,6 @@ const LoginButton = (props: LoginButtonProps) => {
       } else {
         toast.success("Log in successful");
         setUser(loginResponse.data.user);
-        setSession(loginResponse.data.session);
         navigate("/dashboard");
       }
     } else {
@@ -140,7 +138,6 @@ const LoginButton = (props: LoginButtonProps) => {
       } else {
         toast.success("Account created successfully");
         setUser(signupResponse.data.user);
-        setSession(signupResponse.data.session);
         navigate("/dashboard");
       }
     } else {

@@ -10,22 +10,24 @@ import { GoCommentDiscussion } from "react-icons/go";
 import { TbHierarchy3 } from "react-icons/tb";
 import { SupportedLanguages } from "../../components/homepage/SupportedLanguages";
 import GithubStats from "../../components/homepage/GithubStats";
-import { useNavigate } from "react-router-dom";
-import { useAtom } from "jotai/react";
-import { sessionAtom } from "@/store/authStore";
-import type { Session } from "@supabase/supabase-js";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/supabaseClient";
 
 const Homepage = () => {
-  const [session] = useAtom<Session | null>(sessionAtom);
-
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (session) {
-      navigate("/dashboard");
+    async function isUserLoggedIn() {
+      const { data } = await supabase.auth.getSession();
+
+      if (data.session) {
+        navigate("/dashboard");
+      }
     }
-  }, [navigate, session]);
+
+    isUserLoggedIn();
+  }, [navigate]);
 
   return (
     <>

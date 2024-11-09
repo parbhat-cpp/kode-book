@@ -7,17 +7,14 @@ import { IoSearchOutline } from "react-icons/io5";
 import clsx from "clsx";
 import React, { useEffect, useState } from "react";
 import SidebarButton from "./SidebarButton";
-import { useAtom } from "jotai/react";
-import { sessionAtom } from "@/store/authStore";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/supabaseClient";
 
 interface PageWithSidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   path: string;
 }
 
 const PageWithSidebar = (props: PageWithSidebarProps) => {
-  const [session] = useAtom(sessionAtom);
-
   const [isSidebarCollapse, setIsSidebarCollapse] = useState<boolean>(false);
 
   const navigate = useNavigate();
@@ -27,16 +24,20 @@ const PageWithSidebar = (props: PageWithSidebarProps) => {
   };
 
   useEffect(() => {
-    if (!session) {
-      navigate("/");
+    async function isUserLoggedIn() {
+      const { data } = await supabase.auth.getSession();
+
+      if (!data.session) {
+        navigate("/");
+      }
     }
-  }, [navigate, session]);
+
+    isUserLoggedIn();
+  }, [navigate, props.path]);
 
   useEffect(() => {
     function checkScreenWidth() {
       if (window.innerWidth <= 768) {
-        console.log("here");
-
         setIsSidebarCollapse(true);
       }
     }
@@ -48,7 +49,7 @@ const PageWithSidebar = (props: PageWithSidebarProps) => {
 
   return (
     <>
-      <div className="flex bg-lpPrimaryBg text-lpPrimaryText">
+      <div className="flex bg-appPrimaryBg text-lpPrimaryText">
         <div className="flex sticky top-0 left-0 h-screen">
           <div
             className={clsx(
@@ -123,7 +124,7 @@ const PageWithSidebar = (props: PageWithSidebarProps) => {
           </div>
           <div className="h-screen self-end bg-separatorColor w-[1px]"></div>
         </div>
-        <div className="">{props.children}</div>
+        <div className="w-full">{props.children}</div>
       </div>
     </>
   );

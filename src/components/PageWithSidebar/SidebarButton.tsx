@@ -19,7 +19,7 @@ const SidebarButton = (props: SidebarButtonProps) => {
   return (
     <button
       className={clsx(
-        "relative group flex gap-2 justify-start items-center text-xl hover:bg-btnHoverBg hover:text-lpPrimaryBg rounded-md transition-all duration-300",
+        "relative group flex gap-2 justify-start items-center text-xl hover:bg-btnHoverBg hover:text-appPrimaryBg rounded-md transition-all duration-300",
         props.collapse ? "p-2 text-2xl justify-center" : "px-3 py-2"
       )}
       onClick={props.redirect ? handleRedirect : props.onClick}
@@ -29,7 +29,7 @@ const SidebarButton = (props: SidebarButtonProps) => {
       {props.collapse && (
         <span
           className="flex w-max absolute left-full rounded-md px-2 py-1 ml-4 z-15
-          bg-btnHoverBg text-lpPrimaryBg text-sm
+          bg-btnHoverBg text-appPrimaryBg text-sm
           invisible opacity-20 -translate-x-3 transition-all
           group-hover:visible group-hover:opacity-100 group-hover:translate-x-0"
         >

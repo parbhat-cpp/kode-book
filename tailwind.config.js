@@ -58,6 +58,9 @@ export default {
 				lpPrimaryText: 'hsl(var(--lp-primary-text))',
 				separatorColor: 'hsl(var(--separator-color))',
 				btnHoverBg: 'hsl(var(--btn-hover))',
+				appPrimaryBg: 'hsl(var(--app-primary-bg))',
+				appSecondaryBg: 'hsl(var(--app-secondary-bg))',
+				appTertiaryBg: 'hsl(var(--app-tertiary-bg))',
 			},
 			keyframes: {
 				marquee: {
@@ -80,7 +83,10 @@ export default {
 			animation: {
 				marquee: 'marquee var(--duration) infinite linear',
 				'marquee-vertical': 'marquee-vertical var(--duration) linear infinite'
-			}
+			},
+			aspectRatio: {
+				bannerImage: '5/1'
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
