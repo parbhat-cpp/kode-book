@@ -1,7 +1,13 @@
-const Loader = () => {
+import clsx from "clsx";
+
+interface LoaderProps {
+  className?: string;
+}
+
+const Loader = (props: LoaderProps) => {
   return (
     <svg
-      className="text-gray-300 animate-spin"
+      className={clsx("text-gray-300 animate-spin", props.className)}
       viewBox="0 0 64 64"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
