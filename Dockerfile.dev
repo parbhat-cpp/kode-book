@@ -2,7 +2,7 @@ FROM node:21-alpine AS development
 
 WORKDIR /app
 COPY package*.json .
-RUN apk update && apk add bash
+RUN apk update && apk add bash && apk add git
 RUN npm install
 
 COPY . .
