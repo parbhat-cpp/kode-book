@@ -1,30 +1,109 @@
+import { useAtom } from "jotai/react";
 import PageWithSidebar from "../../components/PageWithSidebar";
+import { KodeBookUser, userAtom } from "@/store/authStore";
+import { Briefcase, MapPin, Prohibit, UserCircle } from "@phosphor-icons/react";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "@/supabaseClient";
+import Loader from "@/components/Loader";
 
 const Profile = () => {
+  const [user] = useAtom(userAtom);
+  const [userData, setUserData] = useState<KodeBookUser | null>();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { username } = useParams();
+
+  useEffect(() => {
+    if (!username) {
+      setUserData(user);
+    }
+  }, [user, username]);
+
+  useEffect(() => {
+    if (!username) {
+      return;
+    }
+
+    async function getUserProfile() {
+      setIsLoading(true);
+
+      const userProfileResponse = await supabase
+        .from("profiles")
+        .select("full_name, username, followers, following")
+        .match({
+          username: username,
+        });
+
+      if (!userProfileResponse.data?.length) {
+        setUserData(null);
+        setIsLoading(false);
+
+        return;
+      }
+
+      const userProfileData: KodeBookUser = userProfileResponse.data?.at(0);
+
+      setUserData(userProfileData);
+
+      setIsLoading(false);
+    }
+
+    getUserProfile();
+  }, [username]);
+
   return (
     <PageWithSidebar path="profile">
-      <div className="flex flex-col p-5 h-screen">
-        <div className="flex gap-5 justify-around items-center p-5 bg-appSecondaryBg rounded-lg">
-          <img
-            src="https://images.unsplash.com/photo-1650110002977-3ee8cc5eac91?q=80&w=1474&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            className="aspect-square h-40 w-40 circle"
-          />
-          {/* </div> */}
-          <div>
-            <h3>Parbhat Sharma</h3>
-            <h5 className="text-lpSecondaryText">@parbhat.sharma</h5>
-          </div>
-          <div className="flex flex-col justify-center">
-            <p>Works at MS as SWE</p>
-            <p>Odisha, India</p>
-          </div>
-          <div className="flex flex-col justify-center">
-            <p>0 Followers</p>
-            <p>0 Following</p>
-          </div>
+      {isLoading ? (
+        <div className="h-screen flex justify-center items-center gap-3">
+          <Loader className="h-12 w-12" />
+          <h3 className="md:text-2xl text-lg">Searching for {username}</h3>
         </div>
-        <div className="flex h-full p-5 bg-appSecondaryBg rounded-lg mt-5"></div>
-      </div>
+      ) : (
+        <div>
+          {userData ? (
+            <div className="flex flex-col p-5 h-screen">
+              <div className="grid md:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-5 justify-center items-center p-5 bg-appSecondaryBg rounded-lg">
+                <div className="flex justify-center items-center">
+                  {userData?.avatar_url ? (
+                    <img
+                      src={userData?.avatar_url}
+                      className="aspect-square h-40 w-40 circle"
+                    />
+                  ) : (
+                    <UserCircle className="aspect-square md:h-40 h-24 md:w-40 w-24 circle" />
+                  )}
+                </div>
+                <div className="flex flex-col justify-center text-left mx-auto">
+                  <h3 className="md:text-3xl text-xl">{userData?.full_name}</h3>
+                  <h5 className="text-lpSecondaryText">
+                    @{userData?.username}
+                  </h5>
+                </div>
+                <div className="flex flex-col justify-center gap-3 mx-auto">
+                  <p className="flex items-center gap-2">
+                    <Briefcase size={25} />
+                    Works at {userData?.works_at ?? "None"}
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <MapPin size={25} /> {userData?.location ?? "Not provided"}
+                  </p>
+                </div>
+                <div className="flex flex-col justify-center mx-auto">
+                  <p>0 Followers</p>
+                  <p>0 Following</p>
+                </div>
+              </div>
+              <div className="flex h-full p-5 bg-appSecondaryBg rounded-lg mt-5"></div>
+            </div>
+          ) : (
+            <div className="h-screen flex justify-center items-center gap-2">
+              <Prohibit size={40} />
+              <h3>User not found</h3>
+            </div>
+          )}
+        </div>
+      )}
     </PageWithSidebar>
   );
 };
