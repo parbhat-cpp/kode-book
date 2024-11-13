@@ -23,15 +23,14 @@ import { Input } from "../ui/input";
 import Button from "../Button";
 import { supabase } from "@/supabaseClient";
 import { useAtom } from "jotai/react";
-import { userAtom } from "@/store/authStore";
-import { User } from "@supabase/supabase-js";
+import { KodeBookUser, userAtom } from "@/store/authStore";
 
 interface LoginButtonProps extends React.HTMLAttributes<HTMLDivElement> {
   btntext?: string;
 }
 
 const LoginButton = (props: LoginButtonProps) => {
-  const [, setUser] = useAtom<User | null>(userAtom);
+  const [, setUser] = useAtom<KodeBookUser | null>(userAtom);
 
   const { className, btntext, ...filteredProps } = props;
   const [tab, setTab] = useState<"Login" | "Signup" | "Forgot Password">(
@@ -39,6 +38,31 @@ const LoginButton = (props: LoginButtonProps) => {
   );
 
   const navigate = useNavigate();
+
+  const getUserData = async () => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    const userDataResponse = await supabase.from("profiles").select("*").match({
+      id: session?.user.id,
+    });
+
+    if (userDataResponse.data) {
+      const userData: KodeBookUser = userDataResponse.data?.at(0);
+
+      setUser({
+        full_name: userData['full_name'] as string,
+        avatar_url: userData["avatar_url"] as string,
+        id: userData["id"] as string,
+        updated_at: userData["updated_at"] as Date,
+        username: userData["username"] as string,
+        website: userData["website"] as string,
+        works_at: userData["works_at"] as string,
+        location: userData["location"] as string,
+      });
+    }
+  };
 
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -88,7 +112,7 @@ const LoginButton = (props: LoginButtonProps) => {
         toast.error(loginResponse.error.message);
       } else {
         toast.success("Log in successful");
-        setUser(loginResponse.data.user);
+        getUserData();
         navigate("/dashboard");
       }
     } else {
@@ -137,7 +161,7 @@ const LoginButton = (props: LoginButtonProps) => {
         toast.error(signupResponse.error.message);
       } else {
         toast.success("Account created successfully");
-        setUser(signupResponse.data.user);
+        getUserData();
         navigate("/dashboard");
       }
     } else {
