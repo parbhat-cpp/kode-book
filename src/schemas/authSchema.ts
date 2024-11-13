@@ -12,7 +12,7 @@ const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm
  * The username cannot start with a period nor end with a period. 
  * It must also not have more than one period sequentially. Max length is 30 chars.
  */
-const usernameRegex = /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/igm
+export const usernameRegex = /^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/igm
 
 /**
  * Common password schema for login and signup.

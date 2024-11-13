@@ -9,6 +9,8 @@ import React, { useEffect, useState } from "react";
 import SidebarButton from "./SidebarButton";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/supabaseClient";
+import { logout } from "@/functions";
+import UserSearchDialog from "../UserSearchDialog";
 
 interface PageWithSidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   path: string;
@@ -16,6 +18,8 @@ interface PageWithSidebarProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const PageWithSidebar = (props: PageWithSidebarProps) => {
   const [isSidebarCollapse, setIsSidebarCollapse] = useState<boolean>(false);
+  const [openSearchUserDialog, setOpenSearchUserDialog] =
+    useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -85,7 +89,7 @@ const PageWithSidebar = (props: PageWithSidebarProps) => {
               <SidebarButton
                 icon={<IoSearchOutline />}
                 text="Search"
-                onClick={undefined}
+                onClick={() => setOpenSearchUserDialog(!openSearchUserDialog)}
                 collapse={isSidebarCollapse}
               />
               <SidebarButton
@@ -117,7 +121,7 @@ const PageWithSidebar = (props: PageWithSidebarProps) => {
               <SidebarButton
                 icon={<IoIosLogOut />}
                 text="Log out"
-                onClick={undefined}
+                onClick={logout}
                 collapse={isSidebarCollapse}
               />
             </div>
@@ -125,6 +129,10 @@ const PageWithSidebar = (props: PageWithSidebarProps) => {
           <div className="h-screen self-end bg-separatorColor w-[1px]"></div>
         </div>
         <div className="w-full">{props.children}</div>
+        <UserSearchDialog
+          openDialog={openSearchUserDialog}
+          setOpenDialog={setOpenSearchUserDialog}
+        />
       </div>
     </>
   );
