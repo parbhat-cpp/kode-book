@@ -11,20 +11,23 @@ import {
 interface DialogProps {
   trigger?: React.ReactNode;
   withHeader?: boolean;
-  heading?: string;
+  heading?: React.ReactNode;
   description?: string;
   content?: React.ReactNode;
+  className?: string;
+  openDialog?: boolean;
+  setOpenDialog?: (open: boolean) => void;
 }
 
 const CustomDialog = (props: DialogProps) => {
   return (
-    <DialogContainer>
+    <DialogContainer open={props.openDialog} onOpenChange={props.setOpenDialog}>
       <DialogTrigger>{props.trigger}</DialogTrigger>
-      <DialogContent>
+      <DialogContent className={props.className}>
         {props.withHeader && (
           <DialogHeader>
             <DialogTitle className="text-center">
-              <h4>{props.heading}</h4>
+              <div>{props.heading}</div>
             </DialogTitle>
             <DialogDescription>{props.description}</DialogDescription>
           </DialogHeader>
