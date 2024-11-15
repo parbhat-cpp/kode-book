@@ -13,14 +13,26 @@ import {
 import InputWithIcon from "../InputWithIcon";
 import { FaSearch } from "react-icons/fa";
 import toast from "react-hot-toast";
+import { useState } from "react";
+import Loader from "../Loader";
+import { ApiResponse } from "@/types/apiResponse";
+import { searchUser } from "@/api/users";
+import SearchUserCard from "./components/SearchUserCard";
+import { SearchUser } from "@/types/userType";
+import { useNavigate } from "react-router-dom";
 
 interface SearchUserDialogProps {
   className?: string;
-  openDialog?: boolean;
-  setOpenDialog?: (open: boolean) => void;
+  openDialog: boolean;
+  setOpenDialog: (open: boolean) => void;
 }
 
 const UserSearchDialog = (props: SearchUserDialogProps) => {
+  const [searchLoading, setSearchLoading] = useState<boolean>(false);
+  const [userData, setUserData] = useState<SearchUser[]>([]);
+
+  const navigate = useNavigate();
+
   const searchUsernameForm = useForm<z.infer<typeof searchUsernameSchema>>({
     resolver: zodResolver(searchUsernameSchema),
     defaultValues: {
@@ -38,10 +50,24 @@ const UserSearchDialog = (props: SearchUserDialogProps) => {
     if (searchUsernameValidate.success) {
       const username = searchUsernameValidate.data.username as string;
 
+      setSearchLoading(true);
+
+      const userSearchData: ApiResponse = await searchUser(username);
+
+      if (!userSearchData.error)
+        setUserData(userSearchData.data);
+
+      setSearchLoading(false);
     } else {
       toast.error("Enter valid username");
     }
   };
+
+  const handleSearchCardClick = (username: string) => {
+    props.setOpenDialog(!props.openDialog);
+
+    navigate(`/profile/${username}`);
+  }
 
   return (
     <CustomDialog
@@ -72,7 +98,29 @@ const UserSearchDialog = (props: SearchUserDialogProps) => {
       setOpenDialog={props.setOpenDialog}
       className="bg-appSecondaryBg border-appSecondaryBg text-lpSecondaryBg"
       withHeader
-    ></CustomDialog>
+      content={
+        <>
+          {
+            searchLoading &&
+            <div className="flex w-full justify-center">
+              <div className="flex gap-2">
+                <Loader />
+                <p>Searching user...</p>
+              </div>
+            </div>
+          }
+          <div>
+            {
+              userData && userData.map((user: SearchUser) => (
+                <SearchUserCard user={user} onClick={() => handleSearchCardClick(user.username)} />
+              ))
+            }
+          </div>
+        </>
+      }
+    >
+
+    </CustomDialog>
   );
 };
 
