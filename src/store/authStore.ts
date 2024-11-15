@@ -6,7 +6,6 @@ export interface KodeBookUser {
     id: string,
     updated_at: Date,
     username: string,
-    website: string | null,
     works_at: string | null,
     location: string | null,
 }
