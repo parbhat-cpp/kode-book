@@ -4,8 +4,8 @@ import { KodeBookUser, userAtom } from "@/store/authStore";
 import { Briefcase, MapPin, Prohibit, UserCircle } from "@phosphor-icons/react";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { supabase } from "@/supabaseClient";
 import Loader from "@/components/Loader";
+import { getProfile } from "@/api/users";
 
 const Profile = () => {
   const [user] = useAtom(userAtom);
@@ -28,23 +28,9 @@ const Profile = () => {
     async function getUserProfile() {
       setIsLoading(true);
 
-      const userProfileResponse = await supabase
-        .from("profiles")
-        .select("full_name, username, followers, following")
-        .match({
-          username: username,
-        });
+      const userProfileDataResponse = await getProfile(username as string);
 
-      if (!userProfileResponse.data?.length) {
-        setUserData(null);
-        setIsLoading(false);
-
-        return;
-      }
-
-      const userProfileData: KodeBookUser = userProfileResponse.data?.at(0);
-
-      setUserData(userProfileData);
+      setUserData(userProfileDataResponse.data[0] as unknown as KodeBookUser);
 
       setIsLoading(false);
     }
@@ -68,7 +54,7 @@ const Profile = () => {
                   {userData?.avatar_url ? (
                     <img
                       src={userData?.avatar_url}
-                      className="aspect-square h-40 w-40 circle"
+                      className="aspect-square md:h-40 h-24 md:w-40 w-24 circle"
                     />
                   ) : (
                     <UserCircle className="aspect-square md:h-40 h-24 md:w-40 w-24 circle" />
@@ -90,8 +76,8 @@ const Profile = () => {
                   </p>
                 </div>
                 <div className="flex flex-col justify-center mx-auto">
-                  <p>0 Followers</p>
-                  <p>0 Following</p>
+                  <p>{userData?.followers} Followers</p>
+                  <p>{userData?.following} Following</p>
                 </div>
               </div>
               <div className="flex h-full p-5 bg-appSecondaryBg rounded-lg mt-5"></div>

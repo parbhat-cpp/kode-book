@@ -24,6 +24,8 @@ import Button from "../Button";
 import { supabase } from "@/supabaseClient";
 import { useAtom } from "jotai/react";
 import { KodeBookUser, userAtom } from "@/store/authStore";
+import { getProfile } from "@/api/users";
+import { ApiResponse } from "@/types/apiResponse";
 
 interface LoginButtonProps extends React.HTMLAttributes<HTMLDivElement> {
   btntext?: string;
@@ -40,16 +42,11 @@ const LoginButton = (props: LoginButtonProps) => {
   const navigate = useNavigate();
 
   const getUserData = async () => {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+    const { data: { session } } = await supabase.auth.getSession();
+    const profileData: ApiResponse = await getProfile(session?.user.user_metadata.username as string);
 
-    const userDataResponse = await supabase.from("profiles").select("*").match({
-      id: session?.user.id,
-    });
-
-    if (userDataResponse.data) {
-      const userData: KodeBookUser = userDataResponse.data?.at(0);
+    if (profileData.data) {
+      const userData: KodeBookUser = profileData.data[0] as unknown as KodeBookUser;
 
       setUser({
         full_name: userData['full_name'] as string,
@@ -57,9 +54,10 @@ const LoginButton = (props: LoginButtonProps) => {
         id: userData["id"] as string,
         updated_at: userData["updated_at"] as Date,
         username: userData["username"] as string,
-        website: userData["website"] as string,
         works_at: userData["works_at"] as string,
         location: userData["location"] as string,
+        followers: userData["followers"] as number,
+        following: userData['following'] as number,
       });
     }
   };

@@ -8,6 +8,8 @@ export interface KodeBookUser {
     username: string,
     works_at: string | null,
     location: string | null,
+    followers: number,
+    following: number
 }
 
 export const userAtom = atomWithStorage<KodeBookUser | null>('user', null);
