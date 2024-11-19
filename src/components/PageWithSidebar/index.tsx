@@ -1,6 +1,6 @@
 import { ArrowCircleLeft } from "@phosphor-icons/react";
 import { MdSpaceDashboard } from "react-icons/md";
-import { FaUserFriends, FaLaptopCode } from "react-icons/fa";
+import { FaLaptopCode } from "react-icons/fa";
 import { FaCircleUser, FaMagnifyingGlassLocation } from "react-icons/fa6";
 import { IoMdSettings, IoIosLogOut } from "react-icons/io";
 import { IoSearchOutline } from "react-icons/io5";
@@ -96,12 +96,6 @@ const PageWithSidebar = (props: PageWithSidebarProps) => {
                 icon={<FaMagnifyingGlassLocation />}
                 text="Search nearby"
                 redirect="/search-nearby"
-                collapse={isSidebarCollapse}
-              />
-              <SidebarButton
-                icon={<FaUserFriends />}
-                text="Friends"
-                redirect="/friend-list"
                 collapse={isSidebarCollapse}
               />
               <SidebarButton
