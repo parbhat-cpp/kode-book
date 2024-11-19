@@ -28,7 +28,7 @@ const SidebarButton = (props: SidebarButtonProps) => {
       {!props.collapse && <p>{props.text}</p>}
       {props.collapse && (
         <span
-          className="flex w-max absolute left-full rounded-md px-2 py-1 ml-4 z-15
+          className="flex w-max absolute left-full rounded-md px-2 py-1 ml-8 z-15
           bg-btnHoverBg text-appPrimaryBg text-sm
           invisible opacity-20 -translate-x-3 transition-all
           group-hover:visible group-hover:opacity-100 group-hover:translate-x-0"
